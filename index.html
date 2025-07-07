@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Profile Finder</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Slide-in animation for profile card */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* Pulse animation for button hover */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        /* Fade-in for suggestions */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .animate-slideIn {
+            animation: slideIn 0.6s ease-out;
+        }
+        .animate-pulse-hover:hover {
+            animation: pulse 0.5s ease-in-out;
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out;
+        }
+        /* Background gradient animation */
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        .bg-gradient-animate {
+            background: linear-gradient(45deg, #3b82f6, #a855f7, #ec4899, #3b82f6);
+            background-size: 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+    </style>
+</head>
+<body class="bg-gradient-animate min-h-screen flex items-center justify-center p-4 sm:p-6">
+    <div class="bg-white rounded-3xl shadow-2xl p-8 sm:p-10 max-w-lg w-full transform transition-all hover:scale-105 hover:shadow-3xl">
+        <h1 class="text-4xl font-bold text-center mb-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">GitHub Profile Finder</h1>
+        
+        <!-- Search Form -->
+        <form id="searchForm" class="flex gap-3 mb-8 relative">
+            <div class="relative flex-1">
+                <input 
+                    type="text" 
+                    id="username" 
+                    placeholder="Enter GitHub username" 
+                    autocomplete="off"
+                    class="w-full p-4 pr-12 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-50 text-gray-800 placeholder-gray-400 transition-all duration-500 hover:bg-gray-100"
+                >
+                <svg class="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <!-- Suggestions Dropdown -->
+                <div id="suggestions" class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg hidden max-h-60 overflow-y-auto">
+                    <ul id="suggestionList" class="text-gray-700"></ul>
+                </div>
+            </div>
+            <button 
+                type="submit" 
+                class="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-3 rounded-xl hover:from-purple-600 hover:to-blue-600 transition-all duration-300 font-semibold animate-pulse-hover"
+            >
+                Search
+            </button>
+        </form>
+
+        <!-- Profile Card -->
+        <div id="profile" class="hidden animate-slideIn">
+            <div class="flex items-center gap-5 mb-6">
+                <img id="avatar" class="w-28 h-28 rounded-full border-4 border-purple-100 object-cover transform transition-all hover:scale-110" alt="User Avatar">
+                <div>
+                    <h2 id="name" class="text-2xl font-bold text-gray-800"></h2>
+                    <p id="usernameDisplay" class="text-gray-500 font-medium tracking-wide"></p>
+                </div>
+            </div>
+            <p id="bio" class="text-gray-600 mb-6 leading-relaxed bg-gray-50 p-4 rounded-lg"></p>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-xl text-center transform transition-all hover:scale-105">
+                    <p class="text-gray-600 text-sm font-medium">Repositories</p>
+                    <p id="repos" class="font-bold text-lg text-purple-600"></p>
+                </div>
+                <div class="bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-xl text-center transform transition-all hover:scale-105">
+                    <p class="text-gray-600 text-sm font-medium">Followers</p>
+                    <p id="followers" class="font-bold text-lg text-purple-600"></p>
+                </div>
+                <div class="bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-xl text-center transform transition-all hover:scale-105">
+                    <p class="text-gray-600 text-sm font-medium">Following</p>
+                    <p id="following" class="font-bold text-lg text-purple-600"></p>
+                </div>
+                <div class="bg-gradient-to-br from-blue-50 to-purple-50 p-4 rounded-xl text-center transform transition-all hover:scale-105">
+                    <p class="text-gray-600 text-sm font-medium">Location</p>
+                    <p id="location" class="font-bold text-lg text-purple-600"></p>
+                </div>
+            </div>
+            <a id="profileLink" target="_blank" class="block text-center bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 px-4 rounded-xl hover:from-purple-600 hover:to-blue-600 transition-all duration-300 font-semibold animate-pulse-hover">
+                View GitHub Profile
+            </a>
+        </div>
+
+        <!-- Error Message -->
+        <p id="error" class="text-red-500 text-center font-medium hidden bg-red-50 p-4 rounded-xl animate-pulse"></p>
+
+        <!-- Loading Spinner -->
+        <div id="loading" class="hidden text-center">
+            <svg class="animate-spin h-12 w-12 text-purple-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="text-gray-600 mt-2">Loading...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
